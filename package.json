@@ -7,9 +7,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && cross-env NODE_ENV=production node dist/index.js",
-    "dev": "node --env-file=.env --watch -r ts-node/register src/index.ts",
-    "build": "tsc",
+    "start:prod": "npm run build && cross-env NODE_ENV=production node dist/bundle.js",
+    "start:dev": "nodemon --config nodemon.json",
+    "build": "tsc && webpack --config webpack.config.mjs",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
