@@ -5,7 +5,7 @@ export default {
   entry: './dist/server.js',
   target: 'node', // Specify that you're targeting a Node.js environment
   output: {
-    filename: 'bundle.js',
+    filename: 'BUNDLE.js',
     path: path.resolve('dist'), // Output directory
   },
   resolve: {
