@@ -1,14 +1,10 @@
-import { IncomingMessage, ServerResponse } from 'http';
 import { validate as isValidUuid } from 'uuid';
 import * as Users from '../models/userModel';
-import { IErrorMessage, IUser } from '../types';
+import { IServerArgs, IServerArgsId, IErrorMessage, IUser } from '../types';
 import { sendResponseJson } from '../utils';
 import { INVALID_ID } from '../constatns';
 
-export const getAllUsers = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
-) => {
+export const getAllUsers = async ({ req, res }: IServerArgs) => {
   try {
     const usersRespose = await Users.findAll();
     sendResponseJson(res, 200, usersRespose as IUser[]);
@@ -18,11 +14,7 @@ export const getAllUsers = async (
   }
 };
 
-export const getUser = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
-  id: string,
-) => {
+export const getUser = async ({ req, res, id }: IServerArgsId) => {
   try {
     if (!isValidUuid(id)) {
       sendResponseJson(res, 400, { message: INVALID_ID } as IErrorMessage);
@@ -35,10 +27,7 @@ export const getUser = async (
   }
 };
 
-export const postUser = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
-) => {
+export const postUser = async ({ req, res }: IServerArgs) => {
   try {
     let body = '';
     req.on('data', (chunk) => {
@@ -49,7 +38,7 @@ export const postUser = async (
         const newUser = await Users.createUser(body);
         sendResponseJson(res, 201, newUser as IUser);
       } catch (error) {
-        sendResponseJson(res, 400, error as IErrorMessage);
+        sendResponseJson(res, 400, error as IErrorMessage); // body does not contain required fields or invalid data
       }
     });
   } catch (error) {
@@ -58,11 +47,7 @@ export const postUser = async (
   }
 };
 
-export const putUser = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
-  id: string,
-) => {
+export const putUser = async ({ req, res, id }: IServerArgsId) => {
   try {
     let body = '';
     req.on('data', (chunk) => {
@@ -86,11 +71,7 @@ export const putUser = async (
   }
 };
 
-export const deleteUser = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
-  id: string,
-) => {
+export const deleteUser = async ({ req, res, id }: IServerArgsId) => {
   try {
     if (!isValidUuid(id)) {
       sendResponseJson(res, 400, { message: INVALID_ID } as IErrorMessage);

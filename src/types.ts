@@ -1,3 +1,5 @@
+import { IncomingMessage, ServerResponse } from 'http';
+
 export interface IUser {
   id: string;
   userName: string;
@@ -14,4 +16,13 @@ export interface IRoutes {
 
 export interface IErrorMessage {
   message: string;
+}
+
+export interface IServerArgs {
+  req: IncomingMessage;
+  res: ServerResponse<IncomingMessage> & { req: IncomingMessage };
+}
+
+export interface IServerArgsId extends IServerArgs {
+  id: string;
 }
