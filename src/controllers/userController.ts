@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { validate as isValidUuid } from 'uuid';
 import * as Users from '../models/userModel';
+import { User } from '../types';
 
 export const getAllUsers = async (
   req: IncomingMessage,
@@ -33,4 +34,24 @@ export const getUser = async (
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(error)); // user not found
   }
+};
+
+export const postUser = async (
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
+) => {
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk.toString();
+  });
+  req.on('end', async () => {
+    try {
+      const newUser = await Users.createUser(body);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(newUser));
+    } catch (error) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(error));
+    }
+  });
 };

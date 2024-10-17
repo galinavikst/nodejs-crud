@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
-import { getAllUsers, getUser } from './controllers/userController';
+import { getAllUsers, getUser, postUser } from './controllers/userController';
 
 const start = async (): Promise<void> => {
   console.log(`Here is a UUID: ${uuidv4()}`);
@@ -18,29 +18,20 @@ const start = async (): Promise<void> => {
 
   const server = http.createServer(async (req, res) => {
     const { method, url, headers } = req;
-    console.log(method, url, headers);
+    console.log(method, url);
 
-    req
-      .on('error', (err) => {
-        console.log(err.stack);
-        res.statusCode = 400;
-        res.end();
-      })
-      .on('data', (chunk) => {
-        console.log(chunk);
-      })
-      .on('end', async () => {
-        console.log('request end\n');
-
-        if (req.method === 'GET' && req.url === '/api/users') {
-          await getAllUsers(req, res);
-          return;
-        } else if (req.method === 'GET' && req.url?.startsWith('/api/users/')) {
-          const uuid = req.url?.split('/')[3];
-          await getUser(req, res, uuid);
-        } else {
-        }
-      });
+    if (req.method === 'GET' && req.url === '/api/users') {
+      await getAllUsers(req, res);
+      return;
+    } else if (req.method === 'GET' && req.url?.startsWith('/api/users/')) {
+      const uuid = req.url?.split('/')[3];
+      await getUser(req, res, uuid);
+    } else if (req.method === 'POST' && req.url === '/api/users') {
+      await postUser(req, res);
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Route not found' }));
+    }
   });
 
   server.listen(process.env.PORT || port, () =>

@@ -1,5 +1,5 @@
 import { User } from './types';
 
-const users: User[] = [];
+let users: User[] = [];
 
 export default users;

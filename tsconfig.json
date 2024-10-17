@@ -9,6 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": false
+    //"resolveJsonModule": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
