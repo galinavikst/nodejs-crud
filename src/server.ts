@@ -42,8 +42,6 @@ const start = async (): Promise<void> => {
   } else {
     const server = http.createServer(async (req, res) => {
       try {
-        console.log(req.method, req.url);
-
         if (req.method === 'GET' && req.url === ROUTES.get) {
           await getAllUsers({ req, res });
         } else if (req.method === 'GET' && req.url?.startsWith(ROUTES.get)) {
