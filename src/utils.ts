@@ -53,6 +53,8 @@ export const sendResponseJson = (
   code: number,
   data: Partial<IUser> | IUser | IUser[] | IErrorMessage,
 ) => {
+  const port = res.socket?.localPort;
+  console.log(`Request resolved by worker ${process.pid} on port ${port}`);
   res.writeHead(code, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(data));
 };

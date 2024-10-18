@@ -1,7 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../types';
 import { getParsedDb, isValidUserData, writeDataToDb } from '../utils';
-import { INVALID_USER_DATA, USER_NOT_FOUND } from '../constatns';
+import {
+  INVALID_USER_DATA,
+  USER_NOT_FOUND,
+  USER_REQUIRED_KEYS,
+} from '../constatns';
 
 export const findAll = () => {
   return new Promise(async (resolve, reject) => {
@@ -22,10 +26,11 @@ export const findUser = (id: string) => {
 export const createUser = (data: string) => {
   return new Promise(async (resolve, reject) => {
     const parsedData = JSON.parse(data);
-    const userReqiuredKeys = ['userName', 'age', 'hobbies'];
-    const missedKeys = userReqiuredKeys.filter(
+
+    const missedKeys = USER_REQUIRED_KEYS.filter(
       (key) => !Object.keys(parsedData).includes(key),
     );
+
     if (missedKeys.length) {
       reject({ message: `This keys is required: ${[...missedKeys]}` });
     } else if (!isValidUserData(parsedData)) {
@@ -33,7 +38,14 @@ export const createUser = (data: string) => {
         message: INVALID_USER_DATA,
       });
     } else {
-      const newUser = { ...parsedData, id: uuidv4() };
+      // filters res object from extra keys if user sent such
+      const filteredData = Object.fromEntries(
+        Object.entries(parsedData).filter(([key]) =>
+          USER_REQUIRED_KEYS.includes(key),
+        ),
+      );
+
+      const newUser = { ...filteredData, id: uuidv4() };
       const users = await getParsedDb();
       await writeDataToDb([newUser, ...users]);
       resolve(newUser);
@@ -52,9 +64,17 @@ export const updateUser = (data: string, id: string) => {
       const users = await getParsedDb();
       const user = users.find((user: IUser) => user.id === id);
       if (user) {
-        const updatedUsers = users.map((user: IUser) =>
-          user.id === id ? { ...user, ...parsedData } : user,
+        // filters res object from extra keys if user sent such
+        const filteredData = Object.fromEntries(
+          Object.entries(parsedData).filter(([key]) =>
+            USER_REQUIRED_KEYS.includes(key),
+          ),
         );
+
+        const updatedUsers = users.map((user: IUser) =>
+          user.id === id ? { ...user, ...filteredData } : user,
+        );
+
         await writeDataToDb(updatedUsers);
         const updatedUser = updatedUsers.find((user: IUser) => user.id === id);
         resolve(updatedUser);

@@ -7,8 +7,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start:prod": "npm run build && cross-env NODE_ENV=production node dist/BUNDLE.js",
+    "start:prod": "npm run build &&  node dist/BUNDLE.js",
     "start:dev": "nodemon --config nodemon.json",
+    "start:multi": "cross-env CLUSTER_MODE=true nodemon --config nodemon.json",
     "build": "tsc && webpack --config webpack.config.mjs",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
