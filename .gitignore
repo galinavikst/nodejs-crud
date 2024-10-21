@@ -4,6 +4,9 @@ dist
 # modules
 node_modules
 
+# test
+coverage
+
 # dotenv environment variable files
 .env
 .env.development.local

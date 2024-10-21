@@ -74,7 +74,7 @@ const start = async (): Promise<void> => {
       );
     });
 
-    console.log(`Worker ${process.pid} started`);
+    console.log(`Process with id: ${process.pid} started`);
   }
 };
 
